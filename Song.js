@@ -1,34 +1,47 @@
-import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
   View,
   Image,
-  Dimensions
+  Dimensions,
+  Pressable,
 } from 'react-native';
 import Colors from "./Themes/colors";
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
-export default function Song({ name, id, artist, album, duration, imageUrl }) {
+export function Song({ name, artist, album, duration, imageUrl, external_url, preview_url}) {
+  const navigation = useNavigation();
   return (
-    <View style={styles.songSection}>
-      <View style={styles.subSection}>
-        <Text style={styles.trackNumber}>{id}</Text>
-      </View>
-      <View style={styles.subSection}>
-        <Image style={styles.albumCover} source={{uri : imageUrl}}/>
-      </View>
-      <View style={styles.subSection}>
-        <View style={styles.titleAndArtist}>
-          <Text style={styles.title} numberOfLines={1}> {name} </Text>
-          <Text style={styles.artist} numberOfLines={1}> {artist} </Text>
+    <View>
+      <Pressable onPress={() => {navigation.navigate('SongPreview', {external_url: external_url})}}>
+        <View style={styles.songSection}>
+          <View style={styles.subSection}>
+            <Pressable onPress={(e) => {
+              e.stopPropagation();
+              navigation.navigate('SoundPreview', {preview_url: preview_url})
+              }}
+            >
+              <Ionicons name="ios-play-circle" style={styles.icon} size={24} color={Colors.spotify} />
+            </Pressable>
+          </View>
+          <View style={styles.subSection}>
+            <Image style={styles.albumCover} source={{uri : imageUrl}}/>
+          </View>
+          <View style={styles.subSection}>
+            <View style={styles.titleAndArtist}>
+              <Text style={styles.title} numberOfLines={1}> {name} </Text>
+              <Text style={styles.artist} numberOfLines={1}> {artist} </Text>
+            </View>
+          </View>
+          <View style={styles.subSection}>
+            <Text style={styles.album} numberOfLines={1}> {album} </Text>
+          </View>
+          <View style={styles.subSection}>
+            <Text style={styles.duration}> {duration} </Text>
+          </View>
         </View>
-      </View>
-      <View style={styles.subSection}>
-        <Text style={styles.album} numberOfLines={1}> {album} </Text>
-      </View>
-      <View style={styles.subSection}>
-        <Text style={styles.duration}> {duration} </Text>
-      </View>
+      </Pressable>
     </View>
   );
 }
@@ -44,16 +57,18 @@ const styles = StyleSheet.create({
     color: 'white',
     width: windowWidth,
     justifyContent: 'space-around',
+    marginBottom: 10,
   },
   subSection: {
     margin: 2,
     alignSelf: 'center',
   },
-  trackNumber: {
-    color: Colors.gray,
-    width: 20,
+  icon: {
+    color: Colors.spotify,
+    width: 24,
     display: 'flex',
     justifyContent: 'center',
+    marginRight: 6,
   },
   albumCover: {
     width: 55,
@@ -69,7 +84,7 @@ const styles = StyleSheet.create({
   },
   album: {
     color: 'white',
-    width: 100,
+    width: 90,
     height: 20,
   },
   duration: {
